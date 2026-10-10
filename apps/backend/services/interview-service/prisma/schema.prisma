@@ -1,0 +1,579 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/generated/client"
+}
+
+enum InterviewStateEnum {
+  DRAFT
+  SCHEDULED
+  WAITING
+  RUNNING
+  PAUSED
+  COMPLETED
+  CANCELLED
+  EXPIRED
+  ARCHIVED
+}
+
+model Interview {
+  id                  String             @id @default(uuid())
+  identityId          String             // String Reference
+  profileId           String?            // String Reference
+  templateId          String?            // String Reference
+  
+  title               String
+  interviewType       String
+  difficulty          String
+  programmingLanguage String?
+  
+  state               InterviewStateEnum @default(DRAFT)
+  
+  configuration       InterviewConfiguration?
+  session             InterviewSession?
+  metadata            InterviewMetadata?
+  candidateContext    InterviewCandidateContext?
+  
+  timelines           InterviewTimeline[]
+  snapshots           InterviewSnapshot[]
+  questions           InterviewQuestionReference[]
+  history             InterviewHistory[]
+  events              InterviewEvent[]
+  answerMedia         InterviewAnswerMedia[]
+
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+model InterviewTemplate {
+  id                  String             @id @default(uuid())
+  name                String
+  description         String
+  interviewType       String             // PRACTICE, MOCK, TECHNICAL, HR, CUSTOM
+  difficulty          String             @default("MIXED")
+  duration            Int                @default(60) // in minutes
+  questionCount       Int                @default(0)
+  programmingLanguage String?
+  defaultConfiguration Json?
+  isActive            Boolean            @default(true)
+  createdBy           String?            // Faculty identityId
+  status              String             @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  
+  questions           TemplateQuestionReference[]
+
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+model TemplateQuestionReference {
+  id          String            @id @default(uuid())
+  templateId  String
+  template    InterviewTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questionId  String            // References QuestionBank question
+  order       Int
+  createdAt   DateTime          @default(now())
+
+  @@unique([templateId, questionId])
+  @@index([templateId])
+}
+
+model InterviewConfiguration {
+  id                  String             @id @default(uuid())
+  interviewId         String             @unique
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  duration            Int                // in minutes
+  questionCount       Int
+  strictMode          Boolean            @default(false)
+  cameraRequired      Boolean            @default(false)
+  microphoneRequired  Boolean            @default(false)
+  fullscreenRequired  Boolean            @default(false)
+  tabSwitchingAllowed Boolean            @default(true)
+  autoSaveInterval    Int                @default(60) // seconds
+  heartbeatInterval   Int                @default(30) // seconds
+  maxPauseCount       Int                @default(3)
+  maxResumeCount      Int                @default(3)
+}
+
+model InterviewSession {
+  id                  String             @id @default(uuid())
+  interviewId         String             @unique
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  startedAt           DateTime?
+  finishedAt          DateTime?
+  cancelledAt         DateTime?
+  lastActiveAt        DateTime?
+  
+  reportSnapshot      Json?
+  reportVersion       Int                @default(1)
+  finalizedAt         DateTime?
+  expiresAt           DateTime?
+  completionReason    String?
+
+  timer               InterviewTimer?
+  progress            InterviewProgress?
+  lock                InterviewLock?
+  focusViolations     InterviewFocusViolation[]
+  tabSwitches         InterviewTabSwitchEvent[]
+}
+
+model InterviewTimer {
+  id                  String             @id @default(uuid())
+  sessionId           String             @unique
+  session             InterviewSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  remainingTime       Int                // in seconds
+  elapsedTime         Int                @default(0) // in seconds
+  pausedTime          Int                @default(0) // in seconds
+  resumeCount         Int                @default(0)
+  heartbeatTimestamp  DateTime?
+}
+
+model InterviewProgress {
+  id                  String             @id @default(uuid())
+  sessionId           String             @unique
+  session             InterviewSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  currentQuestionId   String?            // String Reference
+  questionsAnswered   Int                @default(0)
+  percentComplete     Float              @default(0)
+}
+
+model InterviewLock {
+  id                  String             @id @default(uuid())
+  sessionId           String             @unique
+  session             InterviewSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  lockedAt            DateTime           @default(now())
+  lockedBy            String             // e.g. JWT Token ID or IP to prevent duplicate tabs
+  expiresAt           DateTime
+}
+
+model InterviewTimeline {
+  id                  String             @id @default(uuid())
+  interviewId         String
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  previousState       InterviewStateEnum?
+  newState            InterviewStateEnum
+  reason              String?
+  changedAt           DateTime           @default(now())
+}
+
+model InterviewSnapshot {
+  id                  String             @id @default(uuid())
+  interviewId         String
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  snapshotNumber      Int
+  currentQuestionId   String?            // String Reference
+  progressPercent     Float
+  remainingTime       Int
+  state               InterviewStateEnum
+  metadata            Json?
+  
+  createdAt           DateTime           @default(now())
+}
+
+model InterviewQuestionReference {
+  id                  String             @id @default(uuid())
+  interviewId         String
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  questionId          String             // String Reference to QuestionBank
+  order               Int
+  status              String             @default("PENDING") // PENDING, VIEWED, ANSWERED, SKIPPED
+  timeSpent           Int                @default(0) // seconds
+  assignedAt          DateTime           @default(now())
+  
+  answers             InterviewAnswerReference[]
+}
+
+model InterviewAnswerReference {
+  id                  String             @id @default(uuid())
+  questionRefId       String
+  questionRef         InterviewQuestionReference @relation(fields: [questionRefId], references: [id], onDelete: Cascade)
+  
+  answerId            String             // String Reference to Judge0/Submission
+  status              String             @default("SAVED") // SAVED, SUBMITTED
+  submittedAt         DateTime           @default(now())
+  executionReference  String?            // Reference to Execution engine
+}
+
+model InterviewCandidateContext {
+  id                  String             @id @default(uuid())
+  interviewId         String             @unique
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  identityId          String             // String Reference
+  profileId           String?            // String Reference
+  preferredLanguage   String?
+  careerGoal          String?
+  experienceLevel     String?
+  preferredRole       String?
+}
+
+model InterviewMetadata {
+  id                  String             @id @default(uuid())
+  interviewId         String             @unique
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  browser             String?
+  operatingSystem     String?
+  deviceType          String?
+  screenResolution    String?
+  timezone            String?
+  ipPlaceholder       String?
+  networkType         String?
+}
+
+model InterviewHistory {
+  id                  String             @id @default(uuid())
+  interviewId         String
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  event               String
+  details             Json?
+  timestamp           DateTime           @default(now())
+}
+
+model InterviewEvent {
+  id                  String             @id @default(uuid())
+  interviewId         String
+  interview           Interview          @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  
+  eventType           String             // InterviewStarted, QuestionAssigned, etc.
+  payload             Json
+  publishedAt         DateTime           @default(now())
+}
+
+/// Persists the exact questions assigned to each round of an interview session.
+/// Enables refresh-safe question retrieval (same questions on every page load).
+model InterviewRoundAssignment {
+  id            String   @id @default(uuid())
+  interviewId   String
+  questionId    String   // actual questionId in Question Bank
+  questionRefId String   // reference ID sent by frontend
+  round         String   // APTITUDE | CODING | HR
+  position      Int      // 0-indexed order within round
+  createdAt     DateTime @default(now())
+
+  @@unique([interviewId, round, position])
+  @@unique([interviewId, questionRefId])
+  @@index([interviewId, round])
+}
+
+model InterviewExecutionRecord {
+  id                  String   @id @default(uuid())
+  sessionId           String
+  questionRefId       String
+  language            String
+  runMode             String   // RUN or SUBMIT
+  status              String
+  statusDescription   String?
+  passedCount         Int      @default(0)
+  totalCount          Int      @default(0)
+  score               Float    @default(0)
+  executionTime       Float    @default(0)
+  memory              Float    @default(0)
+  compileOutput       String?
+  primaryErrorType    String?
+  attemptNumber       Int
+
+  visiblePassedCount  Int      @default(0)
+  hiddenPassedCount   Int      @default(0)
+  visibleTotalCount   Int      @default(0)
+  hiddenTotalCount    Int      @default(0)
+
+  sourceCode          String?  // Exact submitted student source code
+  stdout              String?  // Program stdout output
+  stderr              String?  // Runtime / error output
+  testCaseResults     Json?    // Detailed test cases with input, expected, actual, passed, hidden
+
+  sourceCodeHash      String
+  sourceCodeLength    Int
+  changedFromPrevious Boolean
+
+  questionTitle       String
+  questionTopic       String?
+  questionTags        Json?
+  questionDifficulty  String
+
+  timestamp           DateTime @default(now())
+  aiAnalysis          Json?
+
+  @@index([sessionId])
+  @@index([sessionId, questionRefId])
+  @@index([timestamp])
+  @@unique([sessionId, questionRefId, attemptNumber])
+}
+
+model InterviewQuestionResult {
+  id                    String   @id @default(uuid())
+  sessionId             String
+  questionRefId         String
+  finalStatus           String   @default("NOT_ATTEMPTED")
+  finalScore            Float    @default(0)
+  totalScore            Float    @default(0)
+  passedCount           Int      @default(0)
+  totalCount            Int      @default(0)
+  latestRunRecordId     String?
+  latestSubmitRecordId  String?
+  finalizedAt           DateTime?
+
+  @@index([sessionId])
+  @@unique([sessionId, questionRefId])
+}
+
+model InterviewFocusViolation {
+  id              String   @id @default(uuid())
+  sessionId       String
+  session         InterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  violationId     String   @unique
+  timestamp       DateTime @default(now())
+  durationMs      Int
+  visibilityState String
+  hasFocus        Boolean
+  
+  @@index([sessionId])
+}
+
+model InterviewTabSwitchEvent {
+  id              String           @id @default(uuid())
+  sessionId       String
+  session         InterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  interviewId     String
+  leftAt          DateTime
+  returnedAt      DateTime?
+  durationSeconds Int              @default(0)
+  createdAt       DateTime         @default(now())
+
+  @@index([sessionId])
+  @@index([interviewId])
+}
+
+// ─── HR Module — Behavioral Interview Models ───────────────────────────────────
+
+model HRInterviewSession {
+  id            String   @id @default(uuid())
+  interviewId   String   @unique          // Links to Interview.id
+  position      String   @default("Software Engineer")
+  interviewType String   @default("Behavioral / HR")
+  status        String   @default("READY") // READY | IN_PROGRESS | ANALYZING | COMPLETED
+  startedAt     DateTime?
+  completedAt   DateTime?
+  overallScore  Float?
+
+  questions  HRInterviewQuestion[]
+  evaluation HRInterviewEvaluation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([interviewId])
+}
+
+model HRInterviewQuestion {
+  id              String   @id @default(uuid())
+  hrSessionId     String
+  hrSession       HRInterviewSession @relation(fields: [hrSessionId], references: [id], onDelete: Cascade)
+
+  question        String
+  category        String   // "Self Introduction" | "Project Challenge" | "Teamwork" | "Conflict Resolution" | "Ownership" | "Leadership" | "Adaptability" | "Situational"
+  questionType    String   @default("MAIN") // MAIN | FOLLOW_UP
+  sequence        Int
+  isFollowUpToId  String?  // references another HRInterviewQuestion.id
+
+  difficulty      String   @default("medium") // easy | medium | hard
+  competency      String?
+  selectionReason String?  @db.Text
+
+  response        HRInterviewResponse?
+
+  createdAt DateTime @default(now())
+
+  @@index([hrSessionId])
+  @@index([hrSessionId, sequence])
+}
+
+model HRInterviewResponse {
+  id                  String   @id @default(uuid())
+  hrSessionId         String
+  questionId          String   @unique
+  question            HRInterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  transcript          String?  @db.Text
+  rawTranscript       String?  @db.Text
+  verifiedTranscript  String?  @db.Text
+  corrections         Json?    @default("[]")
+  uncertainSegments   Json?    @default("[]")
+
+  // 8 Evaluation Dimensions (each 0 - 10)
+  dimensionScores     Json?
+  questionScore       Float?
+  justification       String?  @db.Text
+  strengths           Json?    @default("[]")
+  areasForImprovement Json?    @default("[]")
+  starFormatDetected  Boolean  @default(false)
+  starAnalysis        Json?    // Detailed STAR format breakdown & coaching
+  speechAnalysis      Json?    // Phase 3: Filler word & speech pattern intelligence
+  responseQuality     String?
+  evaluationStatus    String   @default("PENDING")
+  analysisMetadata    Json?
+
+  recordingPath       String?  // relative path on disk e.g. uploads/recordings/{sessionId}/{filename}
+  durationSeconds     Int      @default(0)
+  wordCount           Int      @default(0)
+  submittedAt         DateTime @default(now())
+
+  answerMedia         InterviewAnswerMedia?
+
+  @@index([hrSessionId])
+}
+
+model InterviewAnswerMedia {
+  id              String    @id @default(uuid())
+  interviewId     String
+  questionId      String
+  responseId      String    @unique
+  sequenceNumber  Int
+  storageKey      String
+  mimeType        String    @default("video/webm")
+  durationSeconds Int       @default(0)
+  fileSizeBytes   Int       @default(0)
+  createdAt       DateTime  @default(now())
+  expiresAt       DateTime
+  deletedAt       DateTime?
+  status          String    @default("AVAILABLE") // AVAILABLE | EXPIRED | DELETED
+
+  interview       Interview           @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  response        HRInterviewResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId])
+  @@index([responseId])
+  @@index([expiresAt])
+  @@index([status])
+}
+
+model HRInterviewEvaluation {
+  id            String   @id @default(uuid())
+  hrSessionId   String   @unique
+  hrSession     HRInterviewSession @relation(fields: [hrSessionId], references: [id], onDelete: Cascade)
+
+  // 10 Behavioral Scoring Dimensions
+  communicationScore   Float @default(0)  // weight: 20%
+  problemSolvingScore  Float @default(0)  // weight: 15%
+  teamworkScore        Float @default(0)  // weight: 15%
+  professionalismScore Float @default(0)  // weight: 15%
+  relevanceScore       Float @default(0)  // weight: 15%
+  clarityScore         Float @default(0)  // weight: 10%
+  ownershipScore       Float @default(0)  // weight: 5%
+  leadershipScore      Float @default(0)  // weight: 5%
+  confidenceScore      Float @default(0)
+  structureScore       Float @default(0)
+
+  overallScore  Float  @default(0)
+  feedback      String? @db.Text
+  strengths     Json    @default("[]")   // string[]
+  improvements  Json    @default("[]")   // string[]
+  starGuidance  String? @db.Text
+  aiSummary     String? @db.Text
+  speechSummary Json?   // Phase 3: Aggregated session-level communication pattern summary
+  summary       Json?   // Phase 4: Evidence-based executive interview summary
+  evaluatedAt   DateTime @default(now())
+
+  @@index([hrSessionId])
+}
+
+// ─── Phase 5: Interview Autopsy Intelligence Models ───────────────────────────
+
+model InterviewAutopsy {
+  id                 String   @id @default(uuid())
+  candidateId        String   // identityId of candidate
+  generatedAt        DateTime @default(now())
+  analysisVersion    String   @default("autopsy-v1")
+  model              String?
+  promptVersion      String?  @default("v1.0")
+  status             String   @default("COMPLETED") // COMPLETED | INSUFFICIENT_DATA
+  interviewsAnalyzed Int      @default(0)
+  evidenceHash       String?
+  isStale            Boolean  @default(false)
+  findings           Json     // Array of structured failure patterns with evidence, root cause, impact, recommendations
+  strengths          Json     @default("[]") // Recurring strengths
+  resolvedPatterns   Json     @default("[]") // Previously failing patterns that have improved
+  crossRoundPatterns Json     @default("[]") // Inferred cross-round themes
+  summary            String   @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([candidateId])
+  @@index([candidateId, generatedAt])
+}
+
+// ─── Phase 6: Interview DNA / Skill Genome Models ──────────────────────────────
+
+model InterviewDNASnapshot {
+  id                   String   @id @default(uuid())
+  candidateId          String   // identityId of candidate
+  generatedAt          DateTime @default(now())
+  analysisVersion      String   @default("dna-v1")
+  model                String?  @default("gemini-1.5-pro")
+  promptVersion        String?  @default("v1.0")
+  status               String   @default("COMPLETED") // COMPLETED | BASELINE_ONLY | INSUFFICIENT_DATA
+  interviewsAnalyzed   Int      @default(0)
+  sourceInterviewIds   Json     @default("[]") // string[]
+  isStale              Boolean  @default(false)
+  currentProfile       Json     // Canonical skill metrics (0-100), categories, readiness
+  timelineSnapshots    Json     @default("[]") // Chronological interview points with round & dimension scores
+  trends               Json     @default("[]") // Growth rates, absolute deltas, trend classifications
+  strongestGrowth      Json     @default("[]") // Top improving skills with deltas and evidence
+  recentRegressions    Json     @default("[]") // Regressing skills with deltas
+  stableStrengths      Json     @default("[]") // Consistently high performing skills
+  roundEvolution       Json     // Aptitude, Coding, HR longitudinal trends
+  hrDimensionEvolution Json     // 8 HR dimensions longitudinal trends
+  milestones           Json     @default("[]") // Evidence-backed achievements
+  autopsyConnection    Json?    // Integrated Autopsy findings & resolution status
+  aiInterpretation     Json?    // Cached AI narrative & coaching observations (or null)
+  nextFocus            Json     @default("[]") // High-priority skill focus areas (non-adaptive preview)
+  summary              String   @db.Text
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([candidateId])
+  @@index([candidateId, generatedAt])
+}
+
+// ─── Phase 7: Personalized Improvement Loop Models ───────────────────────────
+
+model PersonalizedImprovementPlan {
+  id                      String   @id @default(uuid())
+  candidateId             String   // identityId of candidate
+  generatedAt             DateTime @default(now())
+  analysisVersion         String   @default("improvement-v1")
+  model                   String?  @default("gemini-1.5-pro")
+  promptVersion           String?  @default("v1.0")
+  status                  String   @default("ACTIVE") // ACTIVE | TARGETS_REACHED | INSUFFICIENT_DATA
+  interviewsAnalyzed      Int      @default(0)
+  sourceAutopsySnapshotId String?
+  sourceDNASnapshotId     String?
+  isStale                 Boolean  @default(false)
+  staleReason             String?
+  priorities              Json     // Array of prioritized improvement areas with scores, rationale, evidence
+  tasks                   Json     // Array of actionable practice tasks with routes, topic filters, completion state
+  targets                 Json     // Target criteria and progress
+  coaching                Json?    // Structured coaching advice and common mistakes
+  reassessmentGuidance    Json?    // Reassessment strategy and recommendations
+  summary                 String   @db.Text
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([candidateId])
+  @@index([candidateId, generatedAt])
+}
+
+

@@ -1,0 +1,131 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/generated/client"
+}
+
+model Identity {
+  id                    String                 @id @default(uuid())
+  email                 String                 @unique
+  passwordHash          String
+  status                IdentityStatus         @default(ACTIVE)
+  failedLoginAttempts   Int                    @default(0)
+  lockedUntil           DateTime?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  roles                 IdentityRole[]
+  sessions              Session[]
+  refreshTokens         RefreshToken[]
+  verificationTokens    VerificationToken[]
+  passwordResetTokens   PasswordResetToken[]
+  auditLogs             AuditLog[]
+}
+
+enum IdentityStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+  BANNED
+  PENDING_VERIFICATION
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique // STUDENT, FACULTY, ADMINISTRATOR
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  identities  IdentityRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  name        String           @unique // read, write, manage, configure, interview, reports, users
+  description String?
+
+  roles       RolePermission[]
+}
+
+model IdentityRole {
+  identityId String
+  roleId     String
+
+  identity   Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([identityId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model Session {
+  id          String   @id @default(uuid())
+  identityId  String
+  token       String   @unique // Opaque session token (not JWT)
+  ipAddress   String?
+  userAgent   String?
+  location    String?  // location placeholder
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  lastActive  DateTime @default(now())
+
+  identity    Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id          String   @id @default(uuid())
+  identityId  String
+  tokenHash   String   @unique
+  expiresAt   DateTime
+  isRevoked   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  identity    Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id          String   @id @default(uuid())
+  identityId  String
+  tokenHash   String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  identity    Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id          String   @id @default(uuid())
+  identityId  String
+  tokenHash   String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  identity    Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  identityId  String?
+  action      String   // LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_RESET, etc.
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  identity    Identity? @relation(fields: [identityId], references: [id], onDelete: SetNull)
+}

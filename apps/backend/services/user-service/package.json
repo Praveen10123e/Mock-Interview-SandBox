@@ -1,0 +1,22 @@
+{
+  "name": "@nm/user-service",
+  "version": "1.0.0",
+  "main": "src/server.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1116.0",
+    "@aws-sdk/s3-request-presigner": "^3.1116.0",
+    "@prisma/client": "^5.22.0",
+    "@types/multer": "^2.2.0",
+    "multer": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/supertest": "^7.2.1",
+    "prisma": "^5.22.0",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
+  }
+}

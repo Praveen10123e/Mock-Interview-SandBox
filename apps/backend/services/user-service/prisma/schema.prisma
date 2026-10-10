@@ -1,0 +1,204 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/generated/client"
+}
+
+model Profile {
+  id                    String                 @id @default(uuid())
+  identityId            String                 @unique // Links to auth-service Identity.id
+  firstName             String
+  lastName              String
+  phone                 String?
+  avatarUrl             String?
+  completionPercentage  Int                    @default(0)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  studentProfile        StudentProfile?
+  facultyProfile        FacultyProfile?
+  adminProfile          AdminProfile?
+  careerProfile         CareerProfile?
+  aiPreferences         AIPreferences?
+  interviewPreference   InterviewPreference?
+  nmProfile             NMProfile?
+  socialLinks           SocialLinks?
+  metrics               ProfileMetrics?
+
+  education             Education[]
+  skills                ProfileSkill[]
+  resumes               Resume[]
+}
+
+model StudentProfile {
+  id              String   @id @default(uuid())
+  profileId       String   @unique
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  college         String?
+  department      String?
+  rollNumber      String?
+  registerNumber  String?
+  batch           String?
+  placementStatus String?
+}
+
+model FacultyProfile {
+  id              String   @id @default(uuid())
+  profileId       String   @unique
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  college         String?
+  department      String?
+  designation     String?
+  employeeId      String?
+}
+
+model AdminProfile {
+  id              String   @id @default(uuid())
+  profileId       String   @unique
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  department      String?
+  designation     String?
+}
+
+model CareerProfile {
+  id                 String   @id @default(uuid())
+  profileId          String   @unique
+  profile            Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  targetRole         String?
+  preferredCompanies String[] // Store array of strings for PostgreSQL
+  expectedSalary     String?
+  preferredLocation  String?
+  employmentType     String?
+  experienceLevel    String?
+  dreamCompany       String?
+  interestedDomains  String[]
+  preferredWorkMode  String?  // Remote / Hybrid / Onsite
+}
+
+model AIPreferences {
+  id                     String   @id @default(uuid())
+  profileId              String   @unique
+  profile                Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  interviewStyle         String?  // Friendly, Professional, Strict, FAANG, Startup, Behavioral, Technical
+  voiceEnabled           Boolean  @default(true)
+  cameraEnabled          Boolean  @default(true)
+  aiStrictness           Int      @default(50) // Scale 1-100
+  adaptiveDifficulty     Boolean  @default(true)
+  stressInjectionEnabled Boolean  @default(false)
+  hintMode               Boolean  @default(true)
+  explanationDetailLevel String?  // Basic, Detailed, Deep
+  preferredVoice         String?
+  preferredDuration      Int?     // Minutes
+}
+
+model InterviewPreference {
+  id                           String   @id @default(uuid())
+  profileId                    String   @unique
+  profile                      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  preferredProgrammingLanguage String?
+  preferredCompany             String?
+  preferredRole                String?
+  preferredInterviewType       String?
+  preferredDifficulty          String?
+  preferredTechnologyStack     String[]
+  preferredInterviewTime       String?
+  timezone                     String?
+}
+
+model NMProfile {
+  id                String   @id @default(uuid())
+  profileId         String   @unique
+  profile           Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  studentId         String?  @unique
+  institution       String?
+  department        String?
+  branch            String?
+  academicYear      String?
+  semester          String?
+  batch             String?
+  course            String?
+  completedModules  String[]
+  certificates      String[]
+  learningProgress  Int      @default(0) // percentage
+}
+
+model Education {
+  id             String   @id @default(uuid())
+  profileId      String
+  profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  degree         String
+  institution    String
+  fieldOfStudy   String?
+  startDate      DateTime?
+  endDate        DateTime?
+  gpa            String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SkillCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique // Programming, Database, Cloud, Soft Skills
+  description String?
+  skills      Skill[]
+}
+
+model Skill {
+  id             String         @id @default(uuid())
+  name           String         @unique
+  categoryId     String
+  category       SkillCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  profileSkills  ProfileSkill[]
+}
+
+model ProfileSkill {
+  profileId      String
+  skillId        String
+  proficiency    String? // Beginner, Intermediate, Expert
+  profile        Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  skill          Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([profileId, skillId])
+}
+
+model Resume {
+  id              String   @id @default(uuid())
+  profileId       String
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  fileName        String
+  fileType        String
+  fileSize        Int
+  storageProvider String
+  storageKey      String
+  version         Int      @default(1)
+  isActive        Boolean  @default(true)
+  parsingStatus   String   @default("PENDING")
+  checksum        String?
+  uploadedAt      DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SocialLinks {
+  id          String   @id @default(uuid())
+  profileId   String   @unique
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  github      String?
+  linkedin    String?
+  leetcode    String?
+  portfolio   String?
+  updatedAt   DateTime @updatedAt
+}
+
+model ProfileMetrics {
+  id                String   @id @default(uuid())
+  profileId         String   @unique
+  profile           Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileViews      Int      @default(0)
+  resumeDownloads   Int      @default(0)
+  interviewCount    Int      @default(0)
+  lastUpdated       DateTime @default(now())
+}

@@ -1,0 +1,51 @@
+{
+  "name": "nm-mock-interview-sandbox",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Naan Mudhalvan Aligned Automated Technical Mock Interview Sandbox",
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend/gateway",
+    "apps/backend/services/*",
+    "packages/*",
+    "packages/prompts/*",
+    "packages/ai/providers/*"
+  ],
+  "scripts": {
+    "dev": "node dev.js",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,js}\"",
+    "clean": "rm -rf node_modules apps/frontend/node_modules apps/backend/gateway/node_modules apps/backend/services/*/node_modules packages/*/node_modules packages/prompts/*/node_modules packages/ai/providers/*/node_modules"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/http-proxy-middleware": "^0.19.3",
+    "@types/node": "^20.11.24",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.19.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.6.1",
+    "helmet": "^8.3.0",
+    "http-proxy-middleware": "^4.2.0",
+    "pg": "^8.22.0",
+    "pino": "^10.3.1",
+    "pino-pretty": "^13.1.3",
+    "zod": "^4.4.3"
+  }
+}

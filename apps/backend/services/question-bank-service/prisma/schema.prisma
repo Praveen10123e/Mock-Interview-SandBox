@@ -1,0 +1,247 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/generated/client"
+}
+
+enum DifficultyLevel {
+  EASY
+  MEDIUM
+  HARD
+  EXPERT
+}
+
+enum QuestionStatusEnum {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  FLAGGED
+}
+
+enum QuestionTypeEnum {
+  CODING
+  SQL
+  HR
+  BEHAVIORAL
+  TECHNICAL
+  APTITUDE
+  MCQ
+  DESCRIPTIVE
+  SCENARIO_BASED
+  CASE_STUDY
+}
+
+model QuestionCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  topics      QuestionTopic[]
+  questions   Question[]
+}
+
+model QuestionTopic {
+  id          String   @id @default(uuid())
+  categoryId  String
+  category    QuestionCategory @relation(fields: [categoryId], references: [id])
+  name        String
+  description String?
+  subTopics   QuestionSubTopic[]
+  questions   Question[]
+
+  @@unique([categoryId, name])
+}
+
+model QuestionSubTopic {
+  id          String   @id @default(uuid())
+  topicId     String
+  topic       QuestionTopic @relation(fields: [topicId], references: [id])
+  name        String
+  description String?
+  questions   Question[]
+
+  @@unique([topicId, name])
+}
+
+model ProgrammingLanguage {
+  id          String   @id @default(uuid())
+  name        String   @unique // Python, Java, C++, SQL, Javascript
+  questions   Question[]
+}
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  questions   Question[]
+}
+
+model QuestionTag {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  questions   Question[]
+}
+
+model Question {
+  id                  String   @id @default(uuid())
+  title               String
+  description         String
+  questionType        QuestionTypeEnum
+  difficulty          DifficultyLevel
+  status              QuestionStatusEnum @default(DRAFT)
+  
+  expectedAnswer      String?
+  idealAnswer         String?
+  estimatedTime       Int?     // in seconds
+  marks               Int?     @default(10)
+  version             Int      @default(1)
+  
+  createdBy           String?  // Identity Reference
+  updatedBy           String?  // Identity Reference
+
+  categoryId          String?
+  category            QuestionCategory? @relation(fields: [categoryId], references: [id])
+  topicId             String?
+  topic               QuestionTopic? @relation(fields: [topicId], references: [id])
+  subTopicId          String?
+  subTopic            QuestionSubTopic? @relation(fields: [subTopicId], references: [id])
+  languageId          String?
+  language            ProgrammingLanguage? @relation(fields: [languageId], references: [id])
+
+  companies           Company[]
+  tags                QuestionTag[]
+  
+  examples            QuestionExample[]
+  constraints         QuestionConstraint[]
+  hints               QuestionHint[]
+  explanations        QuestionExplanation[]
+  attachments         QuestionAttachment[]
+  relations           QuestionRelation[]
+  versions            QuestionVersion[]
+  statistics          QuestionStatistics?
+  metadata            QuestionMetadata?
+  auditLogs           QuestionAudit[]
+
+  importBatchId       String?
+  importBatch         QuestionImportBatch? @relation(fields: [importBatchId], references: [id])
+  sourceId            String?
+  source              QuestionSource? @relation(fields: [sourceId], references: [id])
+
+  hash                String? @unique
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  deletedAt           DateTime?
+}
+
+model QuestionExample {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  input       String?
+  output      String?
+  explanation String?
+  order       Int      @default(1)
+}
+
+model QuestionConstraint {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  constraint  String
+  order       Int      @default(1)
+}
+
+model QuestionHint {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  hint        String
+  order       Int      @default(1)
+}
+
+model QuestionExplanation {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  content     String
+}
+
+model QuestionAttachment {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  url         String
+  filename    String
+  fileType    String
+}
+
+model QuestionMetadata {
+  id          String   @id @default(uuid())
+  questionId  String   @unique
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  originalId  String?  // ID from dataset if applicable
+  jsonPayload Json?    // Any extra structured data
+}
+
+model QuestionStatistics {
+  id                String   @id @default(uuid())
+  questionId        String   @unique
+  question          Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  totalAttempts     Int      @default(0)
+  successfulAttempts Int     @default(0)
+  averageTimeSpent  Int      @default(0) // seconds
+  rating            Float    @default(0.0)
+}
+
+model QuestionVersion {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  version     Int
+  changes     String?
+  snapshot    Json     // The entire question state at that time
+  createdAt   DateTime @default(now())
+  createdBy   String?
+}
+
+model QuestionRelation {
+  id                String   @id @default(uuid())
+  questionId        String
+  question          Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  relatedQuestionId String   // Reference to another question
+  relationType      String   // e.g. "SIMILAR", "PREREQUISITE"
+}
+
+model QuestionAudit {
+  id          String   @id @default(uuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  action      String   // CREATED, UPDATED, DELETED
+  performedBy String?
+  timestamp   DateTime @default(now())
+}
+
+model QuestionSource {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g. "LeetCode", "HackerRank", "Dataset"
+  url         String?
+  questions   Question[]
+}
+
+model QuestionImportBatch {
+  id          String   @id @default(uuid())
+  filename    String
+  status      String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED, ROLLED_BACK
+  totalRecords Int     @default(0)
+  importedCount Int    @default(0)
+  skippedCount Int     @default(0)
+  failedCount  Int     @default(0)
+  errorMessage String?
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  
+  questions   Question[]
+}

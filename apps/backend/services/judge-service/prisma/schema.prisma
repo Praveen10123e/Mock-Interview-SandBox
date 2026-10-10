@@ -1,0 +1,39 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/generated/client"
+}
+
+model ExecutionHistory {
+  id              String   @id @default(uuid())
+  interviewId     String
+  questionRefId   String
+  studentId       String
+  languageId      Int      // Judge0 language ID
+  sourceCode      String   @db.Text
+  token           String   @unique
+  
+  status          String   // e.g. "Accepted", "Compilation Error"
+  stdout          String?  @db.Text
+  stderr          String?  @db.Text
+  compileOutput   String?  @db.Text
+  message         String?  @db.Text
+  
+  time            Float?
+  memory          Int?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model LanguageMapping {
+  id              String   @id @default(uuid())
+  judge0Id        Int      @unique
+  name            String   // "Python 3"
+  slug            String   @unique // "python"
+  version         String?
+}

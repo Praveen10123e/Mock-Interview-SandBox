@@ -1,0 +1,31 @@
+{
+  "name": "Curated Demo Dataset",
+  "version": "v1",
+  "description": "Manually verified demo questions for the NM Mock Interview Platform Student Practice module.",
+  "verifiedBy": "Team Praveen / Dhanush M / Angesh Karthik",
+  "totalQuestions": 65,
+  "datasets": [
+    {
+      "file": "full_program_coding_interview_dataset_40(3).json",
+      "questionType": "CODING",
+      "language": "Multi-Language",
+      "count": 40,
+      "idPrefix": "FULL_PROGRAM",
+      "datasetName": "Curated - Full-Program Coding Interview Dataset"
+    },
+    {
+      "file": "aptitude.json",
+      "questionType": "APTITUDE",
+      "count": 15,
+      "idPrefix": "APT",
+      "datasetName": "Curated Aptitude Set v1"
+    },
+    {
+      "file": "hr.json",
+      "questionType": "HR",
+      "count": 10,
+      "idPrefix": "HR",
+      "datasetName": "Curated HR Set v1"
+    }
+  ]
+}

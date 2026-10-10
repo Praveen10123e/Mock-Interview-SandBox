@@ -1,0 +1,10 @@
+{
+  "name": "@nm/ai-providers-stt",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  # Relational Database for Users, Interviews, RBAC, Configurations
+  postgres:
+    image: postgres:15-alpine
+    container_name: nm_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nm_interview_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pg_data:

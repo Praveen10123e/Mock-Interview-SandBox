@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Usage & Architectural Audit</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --success-bg: #f0fdf4;
+      --success-text: #166534;
+      --danger-bg: #fef2f2;
+      --danger-text: #991b1b;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 48px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 36px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px 0;
+      font-size: 13.5px;
+    }
+    th {
+      background-color: #0f172a;
+      color: #ffffff;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    .badge-success {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid #bbf7d0;
+    }
+    .badge-danger {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid #fecaca;
+    }
+    .qa-item {
+      margin-bottom: 20px;
+      background: #f8fafc;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .qa-question {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .qa-answer {
+      font-size: 13.5px;
+      color: #334155;
+      margin: 0;
+    }
+    ul {
+      padding-left: 20px;
+      font-size: 14px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DATABASE USAGE & ARCHITECTURAL AUDIT</h1>
+    <div class="subtitle">Forensic Analysis of PostgreSQL, MongoDB, and Redis Usage Across the Codebase</div>
+
+    <h2>1. Executive Summary</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Database / Service</th>
+          <th>Docker Container</th>
+          <th>In package.json</th>
+          <th>Used in Code</th>
+          <th>Runtime Connection</th>
+          <th>Architectural Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PostgreSQL</strong></td>
+          <td>YES (<code>nm_postgres:5432</code>)</td>
+          <td>YES (<code>@prisma/client</code>)</td>
+          <td>YES (All 5 Services)</td>
+          <td><span class="badge badge-success">ACTIVE & CONNECTED</span></td>
+          <td><span class="badge badge-success">ACTIVE — Authoritative Primary DB</span></td>
+        </tr>
+        <tr>
+          <td><strong>MongoDB</strong></td>
+          <td>YES (<code>nm_mongodb:27017</code>)</td>
+          <td>NO (0 packages)</td>
+          <td>NO (0 models / queries)</td>
+          <td><span class="badge badge-danger">UNUSED BY APP</span></td>
+          <td><span class="badge badge-danger">CONFIGURED ONLY — Completely Unused</span></td>
+        </tr>
+        <tr>
+          <td><strong>Redis</strong></td>
+          <td>YES (<code>nm_redis:6379</code>)</td>
+          <td>NO (0 packages)</td>
+          <td>NO (0 queues / keys)</td>
+          <td><span class="badge badge-danger">UNUSED BY APP</span></td>
+          <td><span class="badge badge-danger">CONFIGURED ONLY — Completely Unused</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>2. PostgreSQL Audit</h2>
+    <p>PostgreSQL is the <strong>single authoritative database</strong> for the entire platform. All relational data, authentication records, candidate profiles, question bank datasets, interview execution records, AI evaluation snapshots, autopsy failure patterns, DNA skill progressions, and personalized improvement plans are persisted in PostgreSQL using Prisma ORM.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Key Source Files</th>
+          <th>Technology</th>
+          <th>Models / Tables Accessed</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Auth Service</strong></td>
+          <td><code>schema.prisma</code><br><code>IdentityRepository.ts</code><br><code>SessionRepository.ts</code></td>
+          <td>Prisma ORM (<code>@prisma/client</code>)</td>
+          <td><code>Identity</code>, <code>Role</code>, <code>Permission</code>, <code>IdentityRole</code>, <code>Session</code>, <code>RefreshToken</code>, <code>AuditLog</code></td>
+          <td>User credentials, password hashing, RBAC permissions, session tokens, refresh token rotation, password reset OTPs.</td>
+        </tr>
+        <tr>
+          <td><strong>User Service</strong></td>
+          <td><code>schema.prisma</code><br><code>ProfileRepository.ts</code><br><code>EducationRepository.ts</code></td>
+          <td>Prisma ORM (<code>@prisma/client</code>)</td>
+          <td><code>Profile</code>, <code>StudentProfile</code>, <code>FacultyProfile</code>, <code>CareerProfile</code>, <code>Education</code>, <code>Resume</code></td>
+          <td>Candidate education, Naan Mudhalvan registration, career goals, AI interview parameters (strictness, hints), and uploaded resume text.</td>
+        </tr>
+        <tr>
+          <td><strong>Question Bank</strong></td>
+          <td><code>schema.prisma</code><br><code>SearchService.ts</code><br><code>ImportService.ts</code></td>
+          <td>Prisma ORM (<code>@prisma/client</code>)</td>
+          <td><code>Question</code>, <code>QuestionCategory</code>, <code>QuestionTopic</code>, <code>TestCase</code>, <code>ProgrammingLanguage</code></td>
+          <td>Curated question catalog (40 Coding, 15 Aptitude, 10 HR), categorized topics, test cases, code templates, and difficulty ratings.</td>
+        </tr>
+        <tr>
+          <td><strong>Interview Service</strong></td>
+          <td><code>schema.prisma</code><br><code>InterviewSessionService.ts</code><br><code>InterviewAutopsyService.ts</code><br><code>InterviewDNAService.ts</code></td>
+          <td>Prisma ORM (<code>@prisma/client</code>)</td>
+          <td><code>Interview</code>, <code>InterviewSession</code>, <code>InterviewStage</code>, <code>StageCodingExecution</code>, <code>StageHrResponse</code></td>
+          <td>Multi-round interview scheduling (Aptitude, Coding, HR), STT transcripts, AI corrections, rubrics, longitudinal DNA, and Autopsy diagnostics.</td>
+        </tr>
+        <tr>
+          <td><strong>Judge Service</strong></td>
+          <td><code>schema.prisma</code></td>
+          <td>Prisma ORM (<code>@prisma/client</code>)</td>
+          <td><code>ExecutionHistory</code>, <code>LanguageMapping</code></td>
+          <td>Schema defined for execution logging and language ID mappings.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. MongoDB Audit</h2>
+    <ul>
+      <li><strong>Dependencies:</strong> Zero MongoDB packages (<code>mongodb</code> or <code>mongoose</code>) are installed in any service <code>package.json</code>.</li>
+      <li><strong>Application Code:</strong> Zero connections (<code>mongoose.connect</code> / <code>MongoClient</code>), zero schemas, and zero collections exist.</li>
+      <li><strong>Data Storage:</strong> The docker-compose comment indicating MongoDB stores resumes and transcripts is superseded by PostgreSQL, which natively stores resumes (<code>Resume</code> model) and transcripts (<code>StageHrResponse</code>) using PostgreSQL Text/JSON types.</li>
+    </ul>
+    <p><strong>Is MongoDB Actually Used?</strong> <span class="badge badge-danger">NO — only Docker / configuration exists.</span></p>
+
+    <h2>4. Redis Audit</h2>
+    <ul>
+      <li><strong>Dependencies:</strong> Zero Redis packages (<code>redis</code>, <code>ioredis</code>, <code>bull</code>, <code>bullmq</code>) are installed.</li>
+      <li><strong>Application Implementation:</strong> <code>AdminService.ts</code> explicitly reports <code>status: 'DISABLED', isUsed: false, reason: 'Stateless JWT Architecture (No caching layer or Redis broker required)'</code>.</li>
+      <li><strong>Execution Queuing:</strong> <code>ExecutionQueue.ts</code> in judge-service implements an in-memory Map counting semaphore rather than a distributed Redis queue.</li>
+    </ul>
+    <p><strong>Is Redis Actually Used?</strong> <span class="badge badge-danger">NO — only Docker / configuration exists.</span></p>
+
+    <h2>5. Core Audit Verdict & Architecture Analysis</h2>
+    <div class="qa-item">
+      <div class="qa-question">1. Why is PostgreSQL used in this project?</div>
+      <p class="qa-answer">PostgreSQL provides ACID transactions, relational integrity across candidate entities, and structured JSON/Text storage required for multi-round interviews, STT transcripts, rubrics, and longitudinal skill tracking.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">2. Why is MongoDB in the project?</div>
+      <p class="qa-answer">It was defined in docker-compose.yml during initial project scaffolding under the assumption that NoSQL was required for unstructured documents. PostgreSQL's native JSON and Text capabilities satisfied all requirements, so MongoDB was never connected.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">3. Why is Redis in the project?</div>
+      <p class="qa-answer">It was provisioned in docker-compose.yml for prospective session caching and BullMQ job queues. The application implemented a stateless JWT architecture and in-memory execution semaphores, leaving Redis unintegrated.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">4. Which database is the primary authoritative database?</div>
+      <p class="qa-answer"><strong>PostgreSQL</strong> (<code>nm_interview_db</code>).</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">5. Which database stores permanent data?</div>
+      <p class="qa-answer"><strong>PostgreSQL</strong>.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">6. Which database stores temporary / cache / queue data?</div>
+      <p class="qa-answer">Temporary execution throttling is handled in-memory by Node.js (<code>ExecutionQueue.ts</code>); persistent session states reside in PostgreSQL.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">7. Is MongoDB actually necessary?</div>
+      <p class="qa-answer"><strong>No.</strong> MongoDB is completely unused.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">8. Is Redis actually necessary?</div>
+      <p class="qa-answer"><strong>No.</strong> Redis is completely unused in the current architecture.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">9. Are any of the three databases currently redundant?</div>
+      <p class="qa-answer"><strong>Yes. Both MongoDB and Redis are redundant</strong> in the current implementation.</p>
+    </div>
+    <div class="qa-item">
+      <div class="qa-question">10. Can any database configuration safely be removed later?</div>
+      <p class="qa-answer"><strong>Yes.</strong> The <code>mongodb</code> and <code>redis</code> service blocks in <code>docker-compose.yml</code>, along with their volumes (<code>mongo_data</code>, <code>redis_data</code>) and environment variables (<code>MONGO_*</code>, <code>REDIS_*</code>), can be safely removed without affecting platform behavior.</p>
+    </div>
+
+    <h2>6. Recommended Next Actions</h2>
+    <ul>
+      <li><strong>Resource Optimization:</strong> Run <code>docker stop nm_mongodb nm_redis</code> to reclaim memory and CPU cycles from the two unused containers.</li>
+      <li><strong>Configuration Cleanup:</strong> Prune unused <code>MONGO_*</code> and <code>REDIS_*</code> keys from <code>.env</code> and <code>.env.example</code> to streamline developer configuration.</li>
+      <li><strong>Database Strategy:</strong> Maintain PostgreSQL as the unified single-source-of-truth database for all relational, document, and analytics workloads.</li>
+    </ul>
+  </div>
+</body>
+</html>

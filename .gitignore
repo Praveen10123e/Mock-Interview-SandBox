@@ -1,0 +1,135 @@
+# ==========================================
+# Dependencies
+# ==========================================
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# ==========================================
+# Build & Output
+# ==========================================
+dist/
+**/dist/
+build/
+**/build/
+out/
+**/out/
+.next/
+coverage/
+**/coverage/
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# ==========================================
+# Environment & Secrets
+# ==========================================
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+keys/
+*.pem
+*.key
+*.cert
+*.crt
+
+# ==========================================
+# Logs
+# ==========================================
+logs/
+**/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==========================================
+# OS & Editor Files
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==========================================
+# Temporary & Cache Files
+# ==========================================
+tmp/
+**/tmp/
+temp/
+**/temp/
+.cache/
+**/.cache/
+*.class
+/storage/
+**/storage/temp_media/
+apps/backend/services/*/storage/
+!**/src/storage/
+!**/src/storage/**
+*.webm
+*.mp4
+*.wav
+*.pdf
+
+# ==========================================
+# Scratch / One-Time Test & Debug Scripts
+# ==========================================
+test-*.js
+test-*.ts
+test-*.cpp
+debug-*.js
+debug-*.ts
+find_session.js
+test-engine-unit.js
+Test.java
+TestEscape.java
+Test.class
+add-dev-script.js
+audit-db.js
+check-db.js
+delete-curated.js
+final-fix.js
+fix-imports.js
+fix-prisma.js
+fix.js
+get-langs.js
+get_counts.js
+lazy-prisma.js
+refactor_coding.js
+run-curated-import.js
+unlock.js
+verify_pipeline.js
+seed-curated.ts
+
+# ==========================================
+# Generated Reports, Scratch Documents & Docs
+# ==========================================
+*.md
+**/*.md
+*.docx
+**/*.docx
+*.pptx
+**/*.pptx
+reports/
+**/reports/
+generated/
+**/generated/
+.claude/
+**/.claude/
+.windsurf/
+**/.windsurf/
+
+# ==========================================
+# Large Raw Bulk Datasets (> 100MB / Raw Dumps)
+# ==========================================
+data-engineering/dataset/
+aptitude.json
+coding.json
+hr.json

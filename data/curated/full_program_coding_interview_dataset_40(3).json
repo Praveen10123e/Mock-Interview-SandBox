@@ -1,0 +1,1659 @@
+{
+  "dataset_name": "Full-Program Coding Interview Dataset",
+  "version": "1.0",
+  "total_questions": 40,
+  "execution_model": {
+    "type": "stdin_stdout",
+    "description": "Candidates write a complete executable program. The platform supplies test-case input through standard input and compares standard output with the expected output.",
+    "starter_code": "none"
+  },
+  "visibility_rules": {
+    "problem_statement": "visible",
+    "examples": "visible",
+    "hidden_test_cases": "hidden",
+    "expected_output_for_hidden_tests": "hidden"
+  },
+  "question_distribution": {
+    "Easy": 13,
+    "Medium": 13,
+    "Hard": 14
+  },
+  "patterns": [
+    "Arrays & Prefix Sum",
+    "Binary Search",
+    "Binary Trees",
+    "Dynamic Programming",
+    "Graphs",
+    "Greedy",
+    "Hashing / Frequency",
+    "Heap / Priority Queue",
+    "Linked List",
+    "Recursion / Backtracking",
+    "Sliding Window",
+    "Stack / Monotonic Stack",
+    "Two Pointers"
+  ],
+  "problems": [
+    {
+      "problem_id": "ARR-E01",
+      "title": "Range Sum Queries",
+      "pattern": "Arrays & Prefix Sum",
+      "difficulty": "Easy",
+      "description": "You are given an integer array and Q queries. Each query asks for the sum of\nthe elements between two zero-based indices L and R, inclusive. Print one answer\nper query. Build your solution so that many queries can be answered efficiently.",
+      "input_format": "N and Q. The next line contains N integers. Each of the next Q lines contains L R.",
+      "output_format": "Print Q lines, each containing the requested range sum.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "1 <= Q <= 100000",
+        "0 <= L <= R < N",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "5 2\n2 4 6 8 10\n0 2\n1 4",
+          "output": "12\n28"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4 1\n-5 2 7 -1\n0 0",
+          "expected_output": "-5"
+        },
+        {
+          "input": "4 1\n-5 2 7 -1\n1 3",
+          "expected_output": "8"
+        },
+        {
+          "input": "6 2\n1 1 1 1 1 1\n0 5\n2 4",
+          "expected_output": "6\n3"
+        }
+      ],
+      "skills_evaluated": [
+        "prefix sum",
+        "range queries",
+        "integer overflow",
+        "input parsing"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "ARR-M01",
+      "title": "Longest Positive-Sum Segment",
+      "pattern": "Arrays & Prefix Sum",
+      "difficulty": "Medium",
+      "description": "Given an array, find the maximum length of a contiguous subarray whose sum is\nstrictly greater than zero. The array can contain positive, zero, and negative\nvalues. Print 0 if no such non-empty subarray exists.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print the maximum valid length.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6\n-2 3 -1 2 -5 4",
+          "output": "4"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5\n-1 -2 -3 -4 -5",
+          "expected_output": "0"
+        },
+        {
+          "input": "5\n1 -1 0 0 -1",
+          "expected_output": "4"
+        },
+        {
+          "input": "7\n-5 2 -1 2 -1 2 -10",
+          "expected_output": "5"
+        }
+      ],
+      "skills_evaluated": [
+        "prefix sums",
+        "longest subarray",
+        "negative values",
+        "boundary reasoning"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "ARR-H01",
+      "title": "Equal Sum Split Point",
+      "pattern": "Arrays & Prefix Sum",
+      "difficulty": "Hard",
+      "description": "Find every index i such that the sum of elements strictly to the left of i\nequals the sum strictly to the right of i. Indices are zero-based. Print all\nvalid indices in increasing order, or -1 if none exist.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print valid indices separated by spaces, or -1.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "5\n1 7 3 6 5",
+          "output": "3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4\n2 1 -1 2",
+          "expected_output": "-1"
+        },
+        {
+          "input": "5\n0 0 0 0 0",
+          "expected_output": "0 1 2 3 4"
+        },
+        {
+          "input": "7\n-1 3 -2 0 2 -3 1",
+          "expected_output": "3"
+        }
+      ],
+      "skills_evaluated": [
+        "prefix sum",
+        "total sum",
+        "large integers",
+        "multiple answers"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "HASH-E01",
+      "title": "First Unique Value",
+      "pattern": "Hashing / Frequency",
+      "difficulty": "Easy",
+      "description": "Given an integer sequence, print the first value that occurs exactly once.\nIf every value occurs more than once, print -1.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print the first value with frequency one, otherwise -1.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "7\n4 5 1 2 1 4 5",
+          "output": "2"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5\n1 1 2 2 3",
+          "expected_output": "3"
+        },
+        {
+          "input": "4\n7 7 7 7",
+          "expected_output": "-1"
+        },
+        {
+          "input": "6\n-2 3 -2 4 3 5",
+          "expected_output": "4"
+        }
+      ],
+      "skills_evaluated": [
+        "frequency map",
+        "first occurrence",
+        "hashing"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "HASH-M01",
+      "title": "Longest Zero-Sum Subarray",
+      "pattern": "Hashing / Frequency",
+      "difficulty": "Medium",
+      "description": "Find the length of the longest contiguous subarray whose elements sum to zero.\nThe array may contain positive and negative values.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print the maximum length, or 0 if no such subarray exists.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6\n15 -2 2 -8 1 7",
+          "output": "5"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5\n1 2 3 4 5",
+          "expected_output": "0"
+        },
+        {
+          "input": "5\n1 -1 2 -2 3",
+          "expected_output": "4"
+        },
+        {
+          "input": "7\n3 -1 -2 5 -5 1 -1",
+          "expected_output": "5"
+        }
+      ],
+      "skills_evaluated": [
+        "hash map",
+        "prefix sum",
+        "longest subarray"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "HASH-H01",
+      "title": "Count Subarrays With Target Sum",
+      "pattern": "Hashing / Frequency",
+      "difficulty": "Hard",
+      "description": "Count how many contiguous subarrays have sum exactly K. The array can contain\nnegative values, so a two-pointer window is not generally valid.",
+      "input_format": "N and K. The next line contains N integers.",
+      "output_format": "Print the number of qualifying subarrays.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "|A[i]| <= 10^9",
+        "|K| <= 10^14"
+      ],
+      "examples": [
+        {
+          "input": "5 3\n1 2 1 1 1",
+          "output": "3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4 0\n1 -1 1 -1",
+          "expected_output": "6"
+        },
+        {
+          "input": "5 5\n5 0 0 0 0",
+          "expected_output": "5"
+        },
+        {
+          "input": "6 -2\n-1 -1 2 -2 1 -3",
+          "expected_output": "4"
+        }
+      ],
+      "skills_evaluated": [
+        "prefix-sum frequency",
+        "counting subarrays",
+        "negative numbers",
+        "64-bit arithmetic"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "TP-E01",
+      "title": "Pair With Target in Sorted Array",
+      "pattern": "Two Pointers",
+      "difficulty": "Easy",
+      "description": "A sorted array is given. Determine whether two distinct elements add up to the\ntarget. Print YES and their zero-based indices if found; otherwise print NO.",
+      "input_format": "N and target. The next line contains N sorted integers.",
+      "output_format": "Print YES i j for the first pair found with i < j, otherwise NO.",
+      "constraints": [
+        "2 <= N <= 100000",
+        "Array is non-decreasing",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6 13\n1 3 4 6 9 12",
+          "output": "YES 1 4"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5 20\n1 4 7 9 12",
+          "expected_output": "NO"
+        },
+        {
+          "input": "4 0\n-5 -2 2 5",
+          "expected_output": "YES 1 2"
+        },
+        {
+          "input": "6 10\n1 2 3 7 8 9",
+          "expected_output": "0 5"
+        }
+      ],
+      "skills_evaluated": [
+        "two pointers",
+        "sorted array",
+        "pair search"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "TP-M01",
+      "title": "Three Values Closest to Target",
+      "pattern": "Two Pointers",
+      "difficulty": "Medium",
+      "description": "Choose three distinct array elements whose sum is closest to a target T. Print\nthe closest sum. If two sums have the same absolute difference, print the smaller\nsum.",
+      "input_format": "N and T. The next line contains N integers.",
+      "output_format": "Print the closest three-element sum.",
+      "constraints": [
+        "3 <= N <= 2000",
+        "|A[i]| <= 10^6",
+        "|T| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "5 4\n-1 2 1 -4 6",
+          "output": "3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4 10\n1 2 8 9",
+          "expected_output": "9"
+        },
+        {
+          "input": "5 0\n-5 -2 0 2 5",
+          "expected_output": "0"
+        },
+        {
+          "input": "6 15\n4 7 10 11 20 30",
+          "expected_output": "21"
+        }
+      ],
+      "skills_evaluated": [
+        "sorting",
+        "two pointers",
+        "closest sum",
+        "tie breaking"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "TP-H01",
+      "title": "Container With Maximum Area",
+      "pattern": "Two Pointers",
+      "difficulty": "Hard",
+      "description": "Given heights of vertical lines, choose two lines that together with the\nhorizontal axis form a container. The amount of water is the smaller height\nmultiplied by the distance between the lines. Print the maximum possible area.",
+      "input_format": "N followed by N heights.",
+      "output_format": "Print the maximum area.",
+      "constraints": [
+        "2 <= N <= 200000",
+        "0 <= height[i] <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "9\n1 8 6 2 5 4 8 3 7",
+          "output": "49"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "2\n5 5",
+          "expected_output": "5"
+        },
+        {
+          "input": "5\n1 2 3 4 5",
+          "expected_output": "6"
+        },
+        {
+          "input": "6\n6 1 5 4 3 2",
+          "expected_output": "12"
+        }
+      ],
+      "skills_evaluated": [
+        "two pointers",
+        "greedy movement",
+        "64-bit multiplication"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "SW-E01",
+      "title": "Maximum Sum of K Consecutive Values",
+      "pattern": "Sliding Window",
+      "difficulty": "Easy",
+      "description": "Find the maximum sum among all contiguous subarrays of exactly K elements.",
+      "input_format": "N and K. The next line contains N integers.",
+      "output_format": "Print the maximum K-element sum.",
+      "constraints": [
+        "1 <= K <= N <= 200000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6 3\n2 1 5 1 3 2",
+          "output": "9"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5 2\n-1 -5 3 2 1",
+          "expected_output": "5"
+        },
+        {
+          "input": "4 4\n1 2 3 4",
+          "expected_output": "10"
+        },
+        {
+          "input": "7 1\n-4 8 -2 9 -3 5 1",
+          "expected_output": "9"
+        }
+      ],
+      "skills_evaluated": [
+        "fixed window",
+        "running sum",
+        "edge cases"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "SW-M01",
+      "title": "Longest Subarray With At Most K Distinct Values",
+      "pattern": "Sliding Window",
+      "difficulty": "Medium",
+      "description": "Find the maximum length of a contiguous subarray containing at most K distinct\nvalues.",
+      "input_format": "N and K. The next line contains N integers.",
+      "output_format": "Print the maximum length.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "1 <= K <= N",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "8 2\n1 2 1 2 3 3 2 2",
+          "output": "5"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5 1\n4 4 4 2 4",
+          "expected_output": "5"
+        },
+        {
+          "input": "6 2\n1 2 3 2 2 1",
+          "expected_output": "4"
+        },
+        {
+          "input": "5 3\n1 2 3 4 5",
+          "expected_output": "3"
+        }
+      ],
+      "skills_evaluated": [
+        "variable window",
+        "frequency map",
+        "window invariant"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "SW-H01",
+      "title": "Minimum Window Covering Required Values",
+      "pattern": "Sliding Window",
+      "difficulty": "Hard",
+      "description": "You are given two lowercase strings S and T. Find the shortest contiguous\nsubstring of S that contains every character of T with at least the required\nfrequency. If multiple shortest windows exist, return the leftmost one. Print\n-1 if no such window exists.",
+      "input_format": "Two lines containing S and T.",
+      "output_format": "Print the minimum covering substring, or -1.",
+      "constraints": [
+        "1 <= |T| <= |S| <= 200000",
+        "lowercase English letters only"
+      ],
+      "examples": [
+        {
+          "input": "ADOBECODEBANC\nABC",
+          "output": "BANC"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "a\na",
+          "expected_output": "a"
+        },
+        {
+          "input": "a\nb",
+          "expected_output": "-1"
+        },
+        {
+          "input": "aaabdabcefa\nabc",
+          "expected_output": "abc"
+        }
+      ],
+      "skills_evaluated": [
+        "variable window",
+        "frequency tracking",
+        "minimum window",
+        "invariants"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "BS-E01",
+      "title": "Find Target Index",
+      "pattern": "Binary Search",
+      "difficulty": "Easy",
+      "description": "Given a sorted array and a target value, find its first occurrence. Print -1\nif the target is absent.",
+      "input_format": "N and target. The next line contains N sorted integers.",
+      "output_format": "Print the first zero-based index of target, or -1.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "Array is non-decreasing"
+      ],
+      "examples": [
+        {
+          "input": "7 4\n1 2 4 4 4 7 9",
+          "output": "2"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5 6\n1 2 3 4 5",
+          "expected_output": "-1"
+        },
+        {
+          "input": "6 2\n2 2 2 3 4 5",
+          "expected_output": "0"
+        },
+        {
+          "input": "4 -1\n-1 0 3 7",
+          "expected_output": "0"
+        }
+      ],
+      "skills_evaluated": [
+        "binary search",
+        "lower bound",
+        "duplicate handling"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "BS-M01",
+      "title": "Search in Rotated Sorted Array",
+      "pattern": "Binary Search",
+      "difficulty": "Medium",
+      "description": "A strictly increasing array was rotated at an unknown position. Find the\nindex of target in the resulting array, or -1 if absent.",
+      "input_format": "N and target. The next line contains the rotated array.",
+      "output_format": "Print the zero-based index, or -1.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "All values are distinct"
+      ],
+      "examples": [
+        {
+          "input": "7 0\n4 5 6 7 0 1 2",
+          "output": "4"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5 3\n6 7 1 2 4",
+          "expected_output": "-1"
+        },
+        {
+          "input": "6 5\n5 6 7 1 2 3",
+          "expected_output": "0"
+        },
+        {
+          "input": "6 2\n4 5 6 1 2 3",
+          "expected_output": "4"
+        }
+      ],
+      "skills_evaluated": [
+        "rotated binary search",
+        "sorted-half reasoning"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "BS-H01",
+      "title": "Minimum Capacity to Finish Within D Days",
+      "pattern": "Binary Search",
+      "difficulty": "Hard",
+      "description": "Packages must be shipped in their given order. A ship has a fixed capacity and\ncan carry consecutive packages during one day. Find the minimum capacity needed\nto ship all packages within D days.",
+      "input_format": "N and D. The next line contains N package weights.",
+      "output_format": "Print the minimum required capacity.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "1 <= D <= N",
+        "1 <= weight[i] <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "5 3\n1 2 3 4 5",
+          "output": "6"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "3 1\n10 20 30",
+          "expected_output": "60"
+        },
+        {
+          "input": "5 5\n1 2 3 4 5",
+          "expected_output": "5"
+        },
+        {
+          "input": "6 2\n7 2 5 10 8 4",
+          "expected_output": "18"
+        }
+      ],
+      "skills_evaluated": [
+        "binary search on answer",
+        "feasibility check",
+        "greedy packing",
+        "64-bit arithmetic"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "ST-E01",
+      "title": "Balanced Brackets",
+      "pattern": "Stack / Monotonic Stack",
+      "difficulty": "Easy",
+      "description": "Given a string containing only (), {}, and [], determine whether brackets are\nproperly nested and closed.",
+      "input_format": "One line containing the bracket string.",
+      "output_format": "Print YES if valid, otherwise NO.",
+      "constraints": [
+        "1 <= length <= 200000"
+      ],
+      "examples": [
+        {
+          "input": "{[()]}",
+          "output": "YES"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "([)]",
+          "expected_output": "NO"
+        },
+        {
+          "input": "()[]{}",
+          "expected_output": "YES"
+        },
+        {
+          "input": "(((",
+          "expected_output": "NO"
+        }
+      ],
+      "skills_evaluated": [
+        "stack",
+        "matching pairs",
+        "state validation"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "ST-M01",
+      "title": "Next Greater Value",
+      "pattern": "Stack / Monotonic Stack",
+      "difficulty": "Medium",
+      "description": "For every element in an integer array, find the first element to its right\nthat is strictly greater. Print -1 if none exists.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print N answers separated by spaces.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "5\n2 1 2 4 3",
+          "output": "4 2 4 -1 -1"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4\n1 2 3 4",
+          "expected_output": "2 3 4 -1"
+        },
+        {
+          "input": "5\n5 4 3 2 1",
+          "expected_output": "-1 -1 -1 -1 -1"
+        },
+        {
+          "input": "6\n2 7 3 5 4 6",
+          "expected_output": "7 -1 5 6 6 -1"
+        }
+      ],
+      "skills_evaluated": [
+        "monotonic stack",
+        "next greater element",
+        "linear-time optimization"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "ST-H01",
+      "title": "Largest Rectangle in Histogram",
+      "pattern": "Stack / Monotonic Stack",
+      "difficulty": "Hard",
+      "description": "Given heights of adjacent histogram bars, find the largest rectangular area\nthat can be formed using one or more consecutive bars.",
+      "input_format": "N followed by N non-negative heights.",
+      "output_format": "Print the maximum rectangle area.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "0 <= height[i] <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6\n2 1 5 6 2 3",
+          "output": "10"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "2\n5 5",
+          "expected_output": "10"
+        },
+        {
+          "input": "5\n1 2 3 4 5",
+          "expected_output": "9"
+        },
+        {
+          "input": "7\n2 2 2 2 2 2 2",
+          "expected_output": "14"
+        }
+      ],
+      "skills_evaluated": [
+        "monotonic stack",
+        "nearest smaller",
+        "area computation"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "LL-E01",
+      "title": "Reverse a Linked Sequence",
+      "pattern": "Linked List",
+      "difficulty": "Easy",
+      "description": "The input describes a singly linked list. Reverse the list and print the\nresulting values. The list is represented directly as a sequence of values;\nyour program must build the nodes before reversing them.",
+      "input_format": "N followed by N node values.",
+      "output_format": "Print the reversed values separated by spaces.",
+      "constraints": [
+        "0 <= N <= 100000",
+        "|value| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "5\n1 2 3 4 5",
+          "output": "5 4 3 2 1"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "1\n7",
+          "expected_output": "7"
+        },
+        {
+          "input": "0\n",
+          "expected_output": ""
+        },
+        {
+          "input": "4\n-2 0 5 9",
+          "expected_output": "9 5 0 -2"
+        }
+      ],
+      "skills_evaluated": [
+        "linked-list construction",
+        "pointer reversal",
+        "edge cases"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "LL-M01",
+      "title": "Detect Cycle by Position",
+      "pattern": "Linked List",
+      "difficulty": "Medium",
+      "description": "Build a singly linked list from N values. The last node points to the node at\nzero-based position P, or to no node when P is -1. Determine whether the resulting\nlinked structure contains a cycle.",
+      "input_format": "N and P. The next line contains N values. P is -1 or a valid node index.",
+      "output_format": "Print YES if a cycle exists, otherwise NO.",
+      "constraints": [
+        "0 <= N <= 100000",
+        "-1 <= P < N"
+      ],
+      "examples": [
+        {
+          "input": "5 1\n3 2 0 -4 7",
+          "output": "YES"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4 -1\n1 2 3 4",
+          "expected_output": "NO"
+        },
+        {
+          "input": "1 0\n9",
+          "expected_output": "YES"
+        },
+        {
+          "input": "3 2\n1 2 3",
+          "expected_output": "YES"
+        }
+      ],
+      "skills_evaluated": [
+        "Floyd cycle detection",
+        "linked-list pointers"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "LL-H01",
+      "title": "Merge Two Sorted Lists",
+      "pattern": "Linked List",
+      "difficulty": "Hard",
+      "description": "Read two sorted singly linked lists, build both lists, and merge them into one\nsorted list by reusing node links. Print the merged values. Duplicate values are\nallowed.",
+      "input_format": "First line N M. Second line has N values. Third line has M values.",
+      "output_format": "Print the merged sequence in non-decreasing order.",
+      "constraints": [
+        "0 <= N,M <= 100000",
+        "Each list is sorted",
+        "|value| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "4 3\n1 3 5 9\n2 4 10",
+          "output": "1 2 3 4 5 9 10"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "3 3\n1 1 5\n1 2 2",
+          "expected_output": "1 1 1 2 2 5"
+        },
+        {
+          "input": "0 3\n\n2 4 6",
+          "expected_output": "2 4 6"
+        },
+        {
+          "input": "2 0\n-1 7\n",
+          "expected_output": "-1 7"
+        }
+      ],
+      "skills_evaluated": [
+        "linked-list merge",
+        "dummy node",
+        "pointer manipulation"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "RB-E01",
+      "title": "Generate Binary Digits",
+      "pattern": "Recursion / Backtracking",
+      "difficulty": "Easy",
+      "description": "Given N, print all binary strings of length N in lexicographic order. Use\nrecursive generation; each position may contain 0 or 1.",
+      "input_format": "One integer N.",
+      "output_format": "Print one binary string per line.",
+      "constraints": [
+        "1 <= N <= 15"
+      ],
+      "examples": [
+        {
+          "input": "3",
+          "output": "000\n001\n010\n011\n100\n101\n110\n111"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "1",
+          "expected_output": "0\n1"
+        },
+        {
+          "input": "2",
+          "expected_output": "00\n01\n10\n11"
+        },
+        {
+          "input": "3",
+          "expected_output": "000\n001\n010\n011\n100\n101\n110\n111"
+        }
+      ],
+      "skills_evaluated": [
+        "recursion",
+        "backtracking",
+        "state generation"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "RB-M01",
+      "title": "Unique Subsets",
+      "pattern": "Recursion / Backtracking",
+      "difficulty": "Medium",
+      "description": "Given an array that may contain duplicates, generate every distinct subset.\nPrint subsets in lexicographic order. Within each subset, values must also appear\nin non-decreasing order. Print an empty subset as an empty line.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print one distinct subset per line, values separated by spaces.",
+      "constraints": [
+        "0 <= N <= 12",
+        "|A[i]| <= 20"
+      ],
+      "examples": [
+        {
+          "input": "3\n1 2 2",
+          "output": "\n1\n1 2\n1 2 2\n2\n2 2"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "2\n1 1",
+          "expected_output": "\n1\n1 1"
+        },
+        {
+          "input": "3\n-1 0 1",
+          "expected_output": "\n-1\n-1 0\n-1 0 1\n-1 1\n0\n0 1\n1"
+        },
+        {
+          "input": "1\n5",
+          "expected_output": "\n5"
+        }
+      ],
+      "skills_evaluated": [
+        "backtracking",
+        "duplicate skipping",
+        "sorting",
+        "subset generation"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "RB-H01",
+      "title": "N-Queens Count",
+      "pattern": "Recursion / Backtracking",
+      "difficulty": "Hard",
+      "description": "Place N queens on an N x N chessboard so that no two queens attack each other.\nCount all valid arrangements. Print the number of solutions. Do not print the\nboards.",
+      "input_format": "One integer N.",
+      "output_format": "Print the number of valid arrangements.",
+      "constraints": [
+        "1 <= N <= 14"
+      ],
+      "examples": [
+        {
+          "input": "4",
+          "output": "2"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "1",
+          "expected_output": "1"
+        },
+        {
+          "input": "5",
+          "expected_output": "10"
+        },
+        {
+          "input": "6",
+          "expected_output": "4"
+        }
+      ],
+      "skills_evaluated": [
+        "backtracking",
+        "constraint checking",
+        "row/column/diagonal state"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "BT-E01",
+      "title": "Binary Tree Height",
+      "pattern": "Binary Trees",
+      "difficulty": "Easy",
+      "description": "A binary tree is given in level-order. The value -1 represents a missing child.\nBuild the tree and print its height measured as the number of nodes on the\nlongest root-to-leaf path. An empty tree has height 0.",
+      "input_format": "N followed by N level-order tokens; -1 means null.",
+      "output_format": "Print the height.",
+      "constraints": [
+        "0 <= N <= 100000",
+        "Values are integers"
+      ],
+      "examples": [
+        {
+          "input": "7\n1 2 3 4 5 -1 6",
+          "output": "3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "0\n",
+          "expected_output": "0"
+        },
+        {
+          "input": "1\n10",
+          "expected_output": "1"
+        },
+        {
+          "input": "3\n1 2 3",
+          "expected_output": "2"
+        }
+      ],
+      "skills_evaluated": [
+        "tree construction",
+        "level order",
+        "recursion"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "BT-M01",
+      "title": "Level Order Traversal",
+      "pattern": "Binary Trees",
+      "difficulty": "Medium",
+      "description": "Build a binary tree from level-order values where -1 represents a missing\nchild. Print the nodes level by level. Print each level on a separate line.",
+      "input_format": "N followed by N level-order tokens; -1 means null.",
+      "output_format": "Print each non-empty level on its own line.",
+      "constraints": [
+        "0 <= N <= 100000"
+      ],
+      "examples": [
+        {
+          "input": "7\n1 2 3 4 5 -1 6",
+          "output": "1\n2 3\n4 5 6"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "1\n8",
+          "expected_output": "8"
+        },
+        {
+          "input": "5\n1 2 3 -1 4",
+          "expected_output": "1\n2 3\n4"
+        },
+        {
+          "input": "0\n",
+          "expected_output": ""
+        }
+      ],
+      "skills_evaluated": [
+        "BFS",
+        "queue",
+        "tree parsing"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "BT-H01",
+      "title": "Maximum Path Sum in Binary Tree",
+      "pattern": "Binary Trees",
+      "difficulty": "Hard",
+      "description": "Given a binary tree in level-order, find the maximum sum of values along any\nnon-empty path. A path may start and end at any nodes but must follow parent-child\nconnections and cannot reuse a node.",
+      "input_format": "N followed by N level-order tokens; -1 means null.",
+      "output_format": "Print the maximum path sum.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "-10^9 <= node value <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "7\n-10 9 20 -1 -1 15 7",
+          "output": "42"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "1\n-5",
+          "expected_output": "-5"
+        },
+        {
+          "input": "3\n1 2 3",
+          "expected_output": "6"
+        },
+        {
+          "input": "5\n-3 -2 -1 -4 -5",
+          "expected_output": "-1"
+        }
+      ],
+      "skills_evaluated": [
+        "tree DP",
+        "postorder reasoning",
+        "negative values",
+        "global optimum"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "HP-E01",
+      "title": "K Smallest Values",
+      "pattern": "Heap / Priority Queue",
+      "difficulty": "Easy",
+      "description": "Given N integers and K, print the K smallest values in non-decreasing order.\nDuplicate values should be preserved.",
+      "input_format": "N and K followed by N integers.",
+      "output_format": "Print K values in ascending order.",
+      "constraints": [
+        "1 <= K <= N <= 100000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6 3\n7 2 9 1 5 3",
+          "output": "1 2 3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5 2\n5 5 1 9 2",
+          "expected_output": "1 2"
+        },
+        {
+          "input": "3 3\n-2 0 -1",
+          "expected_output": "-2 -1 0"
+        },
+        {
+          "input": "4 1\n8 8 7 6",
+          "expected_output": "6"
+        }
+      ],
+      "skills_evaluated": [
+        "heap",
+        "priority queue",
+        "ordering"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "HP-M01",
+      "title": "Kth Largest Value",
+      "pattern": "Heap / Priority Queue",
+      "difficulty": "Medium",
+      "description": "Find the Kth largest value in an unsorted array. Equal values count as separate\npositions.",
+      "input_format": "N and K followed by N integers.",
+      "output_format": "Print the Kth largest value.",
+      "constraints": [
+        "1 <= K <= N <= 200000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6 2\n3 2 1 5 6 4",
+          "output": "5"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5 1\n4 9 1 7 3",
+          "expected_output": "9"
+        },
+        {
+          "input": "5 5\n4 9 1 7 3",
+          "expected_output": "1"
+        },
+        {
+          "input": "6 3\n5 5 4 4 3 2",
+          "expected_output": "4"
+        }
+      ],
+      "skills_evaluated": [
+        "heap",
+        "kth order statistic",
+        "duplicates"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "HP-H01",
+      "title": "Running Median",
+      "pattern": "Heap / Priority Queue",
+      "difficulty": "Hard",
+      "description": "Read a stream of integers. After each new value, print the median of all values\nseen so far. For an even count, print the exact median using .5 when necessary;\nfor example, 2 and 3 produce 2.5.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print N medians separated by spaces.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "5\n5 15 1 3 8",
+          "output": "5 10 5 4 5"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4\n1 2 3 4",
+          "expected_output": "1 1.5 2 2.5"
+        },
+        {
+          "input": "3\n10 10 10",
+          "expected_output": "10 10 10"
+        },
+        {
+          "input": "5\n-5 -1 -3 -2 -4",
+          "expected_output": "-5 -3 -3 -2.5 -3"
+        }
+      ],
+      "skills_evaluated": [
+        "two heaps",
+        "streaming median",
+        "balanced partitions"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "GR-E01",
+      "title": "Minimum Coins for Exact Amount",
+      "pattern": "Greedy",
+      "difficulty": "Easy",
+      "description": "Given coin denominations and an amount, repeatedly choose the largest coin not\nexceeding the remaining amount. Print the number of coins used, or -1 if the\namount cannot be formed using this greedy process.",
+      "input_format": "N and amount. The next line contains N coin denominations.",
+      "output_format": "Print the number of selected coins, or -1.",
+      "constraints": [
+        "1 <= N <= 100",
+        "1 <= coin <= 10^6",
+        "0 <= amount <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "3 63\n1 5 10",
+          "output": "9"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "3 28\n1 5 10",
+          "expected_output": "6"
+        },
+        {
+          "input": "2 7\n2 4",
+          "expected_output": "-1"
+        },
+        {
+          "input": "4 0\n1 5 10 25",
+          "expected_output": "0"
+        }
+      ],
+      "skills_evaluated": [
+        "greedy choice",
+        "sorting",
+        "remainder handling"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "GR-M01",
+      "title": "Maximum Non-Overlapping Activities",
+      "pattern": "Greedy",
+      "difficulty": "Medium",
+      "description": "Each activity has a start and finish time. Select the maximum number of\nnon-overlapping activities. An activity starting exactly when another finishes\nis allowed.",
+      "input_format": "N followed by N lines containing start and finish.",
+      "output_format": "Print the maximum number of activities selected.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "0 <= start < finish <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "6\n1 3\n2 4\n3 5\n0 6\n5 7\n8 9",
+          "output": "4"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "3\n1 2\n2 3\n3 4",
+          "expected_output": "3"
+        },
+        {
+          "input": "4\n1 10\n2 3\n4 5\n6 7",
+          "expected_output": "3"
+        },
+        {
+          "input": "2\n5 6\n1 2",
+          "expected_output": "2"
+        }
+      ],
+      "skills_evaluated": [
+        "activity selection",
+        "sorting by finish",
+        "greedy proof idea"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "GR-H01",
+      "title": "Minimum Refuels to Reach Destination",
+      "pattern": "Greedy",
+      "difficulty": "Hard",
+      "description": "A vehicle starts with a given amount of fuel and must reach a destination at\ndistance D. There are fuel stations at increasing distances. Each station gives\na fixed amount of fuel. Determine the minimum number of refuels needed. A station\ncan only be used after reaching its position.",
+      "input_format": "First line D and initialFuel. Second line N. Next N lines contain position and fuel.",
+      "output_format": "Print minimum refuels, or -1 if the destination cannot be reached.",
+      "constraints": [
+        "1 <= D <= 10^9",
+        "0 <= initialFuel <= 10^9",
+        "0 <= N <= 100000",
+        "positions increase"
+      ],
+      "examples": [
+        {
+          "input": "100 10\n4\n10 60\n20 30\n30 30\n60 40",
+          "output": "2"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "100 1\n2\n10 50\n50 50",
+          "expected_output": "-1"
+        },
+        {
+          "input": "100 50\n2\n25 25\n50 25",
+          "expected_output": "1"
+        },
+        {
+          "input": "100 10\n3\n10 100\n20 100\n30 100",
+          "expected_output": "1"
+        }
+      ],
+      "skills_evaluated": [
+        "greedy",
+        "max heap",
+        "reachability",
+        "resource allocation"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "G-E01",
+      "title": "Count Connected Components",
+      "pattern": "Graphs",
+      "difficulty": "Easy",
+      "description": "Given an undirected graph with N vertices numbered 1..N and M edges, count\nhow many connected components it contains.",
+      "input_format": "N M followed by M lines of undirected edges u v.",
+      "output_format": "Print the number of connected components.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "0 <= M <= 200000"
+      ],
+      "examples": [
+        {
+          "input": "5 3\n1 2\n2 3\n4 5",
+          "output": "2"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4 0\n",
+          "expected_output": "4"
+        },
+        {
+          "input": "3 3\n1 2\n2 3\n1 3",
+          "expected_output": "1"
+        },
+        {
+          "input": "6 2\n1 2\n5 6",
+          "expected_output": "4"
+        }
+      ],
+      "skills_evaluated": [
+        "DFS/BFS",
+        "visited array",
+        "graph representation"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "G-M01",
+      "title": "Shortest Unweighted Path",
+      "pattern": "Graphs",
+      "difficulty": "Medium",
+      "description": "Given an undirected unweighted graph and two vertices S and T, find the minimum\nnumber of edges between them. Print -1 if T cannot be reached from S.",
+      "input_format": "N M S T followed by M lines containing edges u v.",
+      "output_format": "Print the shortest distance in edges, or -1.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "0 <= M <= 200000"
+      ],
+      "examples": [
+        {
+          "input": "6 6 1 6\n1 2\n2 3\n3 6\n1 4\n4 5\n5 6",
+          "output": "3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "4 2 1 4\n1 2\n2 3",
+          "expected_output": "-1"
+        },
+        {
+          "input": "3 3 1 3\n1 2\n2 3\n1 3",
+          "expected_output": "1"
+        },
+        {
+          "input": "1 0 1 1\n",
+          "expected_output": "0"
+        }
+      ],
+      "skills_evaluated": [
+        "BFS",
+        "shortest path",
+        "distance array"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "G-H01",
+      "title": "Course Dependency Ordering",
+      "pattern": "Graphs",
+      "difficulty": "Hard",
+      "description": "There are N tasks and M prerequisite relations. For each relation A B, task A\nmust be completed before task B. Output one valid ordering of all tasks. If no\nvalid ordering exists because of a cycle, print IMPOSSIBLE. If multiple orders\nare possible, print the lexicographically smallest one.",
+      "input_format": "N M followed by M lines A B.",
+      "output_format": "Print the lexicographically smallest topological ordering, or IMPOSSIBLE.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "0 <= M <= 200000",
+        "1 <= A,B <= N",
+        "A != B"
+      ],
+      "examples": [
+        {
+          "input": "4 4\n1 2\n1 3\n2 4\n3 4",
+          "output": "1 2 3 4"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "3 3\n1 2\n2 3\n3 1",
+          "expected_output": "IMPOSSIBLE"
+        },
+        {
+          "input": "5 2\n2 4\n1 3",
+          "expected_output": "1 2 3 4 5"
+        },
+        {
+          "input": "3 1\n3 1",
+          "expected_output": "2 3 1"
+        }
+      ],
+      "skills_evaluated": [
+        "topological sort",
+        "cycle detection",
+        "min heap",
+        "dependency graph"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "DP-E01",
+      "title": "Climbing Steps",
+      "pattern": "Dynamic Programming",
+      "difficulty": "Easy",
+      "description": "You can climb either 1 or 2 steps at a time. Given N, count the number of\ndifferent ways to reach exactly step N.",
+      "input_format": "One integer N.",
+      "output_format": "Print the number of ways.",
+      "constraints": [
+        "0 <= N <= 45"
+      ],
+      "examples": [
+        {
+          "input": "5",
+          "output": "8"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "0",
+          "expected_output": "1"
+        },
+        {
+          "input": "1",
+          "expected_output": "1"
+        },
+        {
+          "input": "10",
+          "expected_output": "89"
+        }
+      ],
+      "skills_evaluated": [
+        "1D DP",
+        "recurrence",
+        "base cases"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "DP-M01",
+      "title": "Minimum Coins to Amount",
+      "pattern": "Dynamic Programming",
+      "difficulty": "Medium",
+      "description": "Given coin denominations and a target amount, find the minimum number of coins\nneeded to form the exact amount. Each denomination may be used unlimited times.\nPrint -1 when impossible.",
+      "input_format": "N and amount. The next line contains N coin denominations.",
+      "output_format": "Print minimum number of coins, or -1.",
+      "constraints": [
+        "1 <= N <= 50",
+        "0 <= amount <= 100000",
+        "1 <= coin <= 100000"
+      ],
+      "examples": [
+        {
+          "input": "3 11\n1 2 5",
+          "output": "3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "3 6\n2 3 4",
+          "expected_output": "2"
+        },
+        {
+          "input": "2 7\n2 4",
+          "expected_output": "-1"
+        },
+        {
+          "input": "1 0\n5",
+          "expected_output": "0"
+        }
+      ],
+      "skills_evaluated": [
+        "unbounded DP",
+        "state transition",
+        "impossible states"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "DP-H01",
+      "title": "Longest Increasing Subsequence",
+      "pattern": "Dynamic Programming",
+      "difficulty": "Hard",
+      "description": "Find the length of the longest strictly increasing subsequence. The chosen\nelements do not need to be contiguous.",
+      "input_format": "N followed by N integers.",
+      "output_format": "Print the LIS length.",
+      "constraints": [
+        "1 <= N <= 200000",
+        "|A[i]| <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "8\n10 9 2 5 3 7 101 18",
+          "output": "4"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "5\n5 4 3 2 1",
+          "expected_output": "1"
+        },
+        {
+          "input": "6\n1 2 3 4 5 6",
+          "expected_output": "6"
+        },
+        {
+          "input": "7\n0 1 0 3 2 3 4",
+          "expected_output": "5"
+        }
+      ],
+      "skills_evaluated": [
+        "DP",
+        "binary-search optimization",
+        "subsequence reasoning"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    },
+    {
+      "problem_id": "G-H02",
+      "title": "Network Propagation Time",
+      "pattern": "Graphs",
+      "difficulty": "Hard",
+      "description": "A directed network contains N nodes and M weighted links. A signal starts at\nnode S and travels along links. Each link has a non-negative travel time. Find\nthe time required for every node to receive the signal. If any node is unreachable,\nprint -1; otherwise print the maximum shortest-path distance.",
+      "input_format": "N M S followed by M lines containing U V W, meaning a directed edge U -> V with weight W.",
+      "output_format": "Print the time for the last node to receive the signal, or -1 if some node is unreachable.",
+      "constraints": [
+        "1 <= N <= 100000",
+        "0 <= M <= 200000",
+        "1 <= U,V <= N",
+        "0 <= W <= 10^9"
+      ],
+      "examples": [
+        {
+          "input": "4 4 2\n2 1 1\n2 3 1\n3 4 1\n1 4 5",
+          "output": "3"
+        }
+      ],
+      "hidden_test_cases": [
+        {
+          "input": "3 3 1\n1 2 4\n1 3 2\n2 3 1",
+          "expected_output": "5"
+        },
+        {
+          "input": "4 2 1\n1 2 3\n2 3 4",
+          "expected_output": "-1"
+        },
+        {
+          "input": "5 6 1\n1 2 2\n1 3 5\n2 3 1\n2 4 7\n3 4 2\n4 5 3",
+          "expected_output": "8"
+        }
+      ],
+      "skills_evaluated": [
+        "Dijkstra",
+        "priority queue",
+        "weighted shortest path",
+        "unreachable nodes"
+      ],
+      "submission_format": "full_program",
+      "candidate_starter_code": "empty"
+    }
+  ]
+}
