@@ -113,6 +113,7 @@ seed-curated.ts
 # ==========================================
 *.md
 **/*.md
+!README.md
 *.docx
 **/*.docx
 *.pptx
